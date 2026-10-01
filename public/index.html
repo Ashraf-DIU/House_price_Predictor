@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>House Price Predictor</title>
+  <style>
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #f4f7f6; display: flex; justify-content: center; padding: 2rem; margin: 0; }
+    .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; max-width: 550px; }
+    h2 { margin-top: 0; color: #2c3e50; text-align: center; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .field { display: flex; flex-direction: column; margin-bottom: 0.8rem; }
+    .field.full { grid-column: span 2; }
+    label { font-size: 0.85rem; font-weight: 600; color: #4a5568; margin-bottom: 0.3rem; }
+    input, select { padding: 0.6rem; border: 1fr solid #cbd5e0; border-radius: 6px; font-size: 0.95rem; }
+    button { grid-column: span 2; background: #3182ce; color: white; border: none; padding: 0.8rem; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 1rem; }
+    button:hover { background: #2b6cb0; }
+    #result { margin-top: 1.5rem; text-align: center; font-size: 1.25rem; font-weight: bold; color: #2b6cb0; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>House Price Predictor</h2>
+  <form id="predictionForm" class="grid">
+    <div class="field"><label>Area (sq ft)</label><input type="number" id="area" value="3000" required></div>
+    <div class="field"><label>Bedrooms</label><input type="number" id="bedrooms" value="3" required></div>
+    <div class="field"><label>Bathrooms</label><input type="number" id="bathrooms" value="2" required></div>
+    <div class="field"><label>Stories</label><input type="number" id="stories" value="2" required></div>
+    <div class="field"><label>Parking Spots</label><input type="number" id="parking" value="1" required></div>
+    
+    <div class="field">
+      <label>Main Road</label>
+      <select id="mainroad"><option value="1">Yes</option><option value="0">No</option></select>
+    </div>
+    <div class="field">
+      <label>Guestroom</label>
+      <select id="guestroom"><option value="0">No</option><option value="1">Yes</option></select>
+    </div>
+    <div class="field">
+      <label>Basement</label>
+      <select id="basement"><option value="0">No</option><option value="1">Yes</option></select>
+    </div>
+    <div class="field">
+      <label>Hot Water Heating</label>
+      <select id="hotwaterheating"><option value="0">No</option><option value="1">Yes</option></select>
+    </div>
+    <div class="field">
+      <label>Air Conditioning</label>
+      <select id="airconditioning"><option value="1">Yes</option><option value="0">No</option></select>
+    </div>
+    <div class="field">
+      <label>Preferred Area</label>
+      <select id="prefarea"><option value="0">No</option><option value="1">Yes</option></select>
+    </div>
+    <div class="field full">
+      <label>Furnishing Status</label>
+      <select id="furnishingstatus">
+        <option value="furnished">Furnished</option>
+        <option value="semi-furnished">Semi-Furnished</option>
+        <option value="unfurnished">Unfurnished</option>
+      </select>
+    </div>
+
+    <button type="submit">Predict Price</button>
+  </form>
+
+  <div id="result"></div>
+</div>
+
+<script>
+  document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerText = "Calculating...";
+
+    const furnishing = document.getElementById('furnishingstatus').value;
+
+    const payload = {
+      area: parseFloat(document.getElementById('area').value),
+      bedrooms: parseInt(document.getElementById('bedrooms').value),
+      bathrooms: parseInt(document.getElementById('bathrooms').value),
+      stories: parseInt(document.getElementById('stories').value),
+      mainroad: parseInt(document.getElementById('mainroad').value),
+      guestroom: parseInt(document.getElementById('guestroom').value),
+      basement: parseInt(document.getElementById('basement').value),
+      hotwaterheating: parseInt(document.getElementById('hotwaterheating').value),
+      airconditioning: parseInt(document.getElementById('airconditioning').value),
+      parking: parseInt(document.getElementById('parking').value),
+      prefarea: parseInt(document.getElementById('prefarea').value),
+      furnishingstatus_semi_furnished: furnishing === 'semi-furnished' ? 1 : 0,
+      furnishingstatus_unfurnished: furnishing === 'unfurnished' ? 1 : 0
+    };
+
+    try {
+      const response = await fetch('/api/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (data.prediction !== undefined) {
+        resultDiv.innerText = `Estimated Price: $${data.prediction.toLocaleString(undefined, {maximumFractionDigits: 2})}`;
+      } else {
+        resultDiv.innerText = "Error getting prediction.";
+      }
+    } catch (err) {
+      resultDiv.innerText = "Error connecting to server.";
+    }
+  });
+</script>
+
+</body>
+</html>
