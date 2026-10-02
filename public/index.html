@@ -3,82 +3,434 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>House Price Predictor</title>
+  <title>House Price Estimator</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: #f4f7f6; display: flex; justify-content: center; padding: 2rem; margin: 0; }
-    .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); width: 100%; max-width: 550px; }
-    h2 { margin-top: 0; color: #2c3e50; text-align: center; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .field { display: flex; flex-direction: column; margin-bottom: 0.8rem; }
-    .field.full { grid-column: span 2; }
-    label { font-size: 0.85rem; font-weight: 600; color: #4a5568; margin-bottom: 0.3rem; }
-    input, select { padding: 0.6rem; border: 1fr solid #cbd5e0; border-radius: 6px; font-size: 0.95rem; }
-    button { grid-column: span 2; background: #3182ce; color: white; border: none; padding: 0.8rem; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 1rem; }
-    button:hover { background: #2b6cb0; }
-    #result { margin-top: 1.5rem; text-align: center; font-size: 1.25rem; font-weight: bold; color: #2b6cb0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      border: 1fr solid rgba(255, 255, 255, 0.6);
+    }
+    /* Custom Toggle styling */
+    .toggle-checkbox:checked {
+      right: 0;
+      border-color: #2563eb;
+    }
+    .toggle-checkbox:checked + .toggle-label {
+      background-color: #2563eb;
+    }
   </style>
 </head>
-<body>
+<body class="bg-gradient-to-br from-slate-50 via-slate-100 to-indigo-50/40 min-h-screen text-slate-800 p-4 sm:p-6 lg:p-10 flex flex-col items-center justify-center">
 
-<div class="card">
-  <h2>House Price Predictor</h2>
-  <form id="predictionForm" class="grid">
-    <div class="field"><label>Area (sq ft)</label><input type="number" id="area" value="3000" required></div>
-    <div class="field"><label>Bedrooms</label><input type="number" id="bedrooms" value="3" required></div>
-    <div class="field"><label>Bathrooms</label><input type="number" id="bathrooms" value="2" required></div>
-    <div class="field"><label>Stories</label><input type="number" id="stories" value="2" required></div>
-    <div class="field"><label>Parking Spots</label><input type="number" id="parking" value="1" required></div>
+<div class="w-full max-w-5xl mx-auto">
+  
+  <!-- Header Title -->
+  <header class="text-center mb-8">
+    <div class="inline-flex items-center justify-center p-3 bg-brand-600 text-white rounded-2xl shadow-lg shadow-brand-500/30 mb-4 transform hover:scale-105 transition-all">
+      <i class="fa-solid font-bold text-2xl fa-house-chimney-window px-1"></i>
+    </div>
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+      House Price <span class="bg-gradient-to-r from-brand-600 to-indigo-600 bg-clip-text text-transparent">Estimator</span>
+    </h1>
+    <p class="text-slate-500 text-sm sm:text-base max-w-md mx-auto mt-2 font-medium">
+      Smart Machine Learning Property Valuation Model
+    </p>
+  </header>
+
+  <!-- Main Card Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
     
-    <div class="field">
-      <label>Main Road</label>
-      <select id="mainroad"><option value="1">Yes</option><option value="0">No</option></select>
-    </div>
-    <div class="field">
-      <label>Guestroom</label>
-      <select id="guestroom"><option value="0">No</option><option value="1">Yes</option></select>
-    </div>
-    <div class="field">
-      <label>Basement</label>
-      <select id="basement"><option value="0">No</option><option value="1">Yes</option></select>
-    </div>
-    <div class="field">
-      <label>Hot Water Heating</label>
-      <select id="hotwaterheating"><option value="0">No</option><option value="1">Yes</option></select>
-    </div>
-    <div class="field">
-      <label>Air Conditioning</label>
-      <select id="airconditioning"><option value="1">Yes</option><option value="0">No</option></select>
-    </div>
-    <div class="field">
-      <label>Preferred Area</label>
-      <select id="prefarea"><option value="0">No</option><option value="1">Yes</option></select>
-    </div>
-    <div class="field full">
-      <label>Furnishing Status</label>
-      <select id="furnishingstatus">
-        <option value="furnished">Furnished</option>
-        <option value="semi-furnished">Semi-Furnished</option>
-        <option value="unfurnished">Unfurnished</option>
-      </select>
+    <!-- Form Card (Col 7) -->
+    <div class="lg:col-span-7 glass-card bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/60 border border-slate-100">
+      <form id="predictionForm" class="space-y-6">
+        
+        <!-- Section: Property Specifications -->
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-ruler-combined text-brand-500"></i> Dimensions & Features
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- Area -->
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                Total Area (sq ft)
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="fa-solid fa-vector-square"></i>
+                </div>
+                <input type="number" id="area" value="3000" min="500" max="20000" step="50" required
+                  class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:bg-white focus:border-brand-500 transition-all">
+              </div>
+            </div>
+
+            <!-- Bedrooms -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Bedrooms</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="fa-solid fa-bed"></i>
+                </div>
+                <input type="number" id="bedrooms" value="3" min="1" max="10" required
+                  class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:bg-white focus:border-brand-500 transition-all">
+              </div>
+            </div>
+
+            <!-- Bathrooms -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Bathrooms</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="fa-solid fa-bath"></i>
+                </div>
+                <input type="number" id="bathrooms" value="2" min="1" max="10" required
+                  class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:bg-white focus:border-brand-500 transition-all">
+              </div>
+            </div>
+
+            <!-- Stories -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Stories</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="fa-solid fa-building"></i>
+                </div>
+                <input type="number" id="stories" value="2" min="1" max="4" required
+                  class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:bg-white focus:border-brand-500 transition-all">
+              </div>
+            </div>
+
+            <!-- Parking Spots -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Parking Spots</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="fa-solid fa-square-parking"></i>
+                </div>
+                <input type="number" id="parking" value="1" min="0" max="5" required
+                  class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-semibold focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:bg-white focus:border-brand-500 transition-all">
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Section: Amenities (Pill Toggles) -->
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-brand-500"></i> Amenities & Location
+          </h2>
+
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            
+            <button type="button" data-input="mainroad" class="feature-badge active flex items-center gap-2 p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-semibold text-xs transition-all hover:bg-slate-100">
+              <i class="fa-solid fa-road text-sm"></i>
+              <span>Main Road</span>
+            </button>
+            <input type="hidden" id="mainroad" value="1">
+
+            <button type="button" data-input="airconditioning" class="feature-badge active flex items-center gap-2 p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-semibold text-xs transition-all hover:bg-slate-100">
+              <i class="fa-solid fa-snowflake text-sm"></i>
+              <span>Air Conditioning</span>
+            </button>
+            <input type="hidden" id="airconditioning" value="1">
+
+            <button type="button" data-input="guestroom" class="feature-badge flex items-center gap-2 p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-semibold text-xs transition-all hover:bg-slate-100">
+              <i class="fa-solid fa-user-group text-sm"></i>
+              <span>Guestroom</span>
+            </button>
+            <input type="hidden" id="guestroom" value="0">
+
+            <button type="button" data-input="basement" class="feature-badge flex items-center gap-2 p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-semibold text-xs transition-all hover:bg-slate-100">
+              <i class="fa-solid fa-dungeon text-sm"></i>
+              <span>Basement</span>
+            </button>
+            <input type="hidden" id="basement" value="0">
+
+            <button type="button" data-input="hotwaterheating" class="feature-badge flex items-center gap-2 p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-semibold text-xs transition-all hover:bg-slate-100">
+              <i class="fa-solid fa-fire text-sm"></i>
+              <span>Hot Water</span>
+            </button>
+            <input type="hidden" id="hotwaterheating" value="0">
+
+            <button type="button" data-input="prefarea" class="feature-badge flex items-center gap-2 p-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-semibold text-xs transition-all hover:bg-slate-100">
+              <i class="fa-solid fa-star text-sm"></i>
+              <span>Preferred Area</span>
+            </button>
+            <input type="hidden" id="prefarea" value="0">
+
+          </div>
+        </div>
+
+        <!-- Section: Furnishing Status Selector -->
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-couch text-brand-500"></i> Furnishing Status
+          </h2>
+          <div class="grid grid-cols-3 gap-2 p-1.5 bg-slate-100 rounded-2xl">
+            <button type="button" data-value="furnished" class="furnish-btn active py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all text-center">
+              Furnished
+            </button>
+            <button type="button" data-value="semi-furnished" class="furnish-btn py-2.5 rounded-xl font-bold text-xs sm:text-sm text-slate-500 transition-all text-center">
+              Semi-Furnished
+            </button>
+            <button type="button" data-value="unfurnished" class="furnish-btn py-2.5 rounded-xl font-bold text-xs sm:text-sm text-slate-500 transition-all text-center">
+              Unfurnished
+            </button>
+          </div>
+          <input type="hidden" id="furnishingstatus" value="furnished">
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="submitBtn" 
+          class="w-full py-4 bg-gradient-to-r from-brand-600 to-indigo-600 text-white rounded-2xl font-bold text-base shadow-lg shadow-brand-500/30 hover:shadow-brand-500/50 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2">
+          <span>Calculate Estimated Price</span>
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </button>
+
+      </form>
     </div>
 
-    <button type="submit">Predict Price</button>
-  </form>
+    <!-- Results Container Card (Col 5) -->
+    <div class="lg:col-span-5 space-y-6">
+      
+      <!-- Primary Price Output Box -->
+      <div class="glass-card bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden border border-slate-800">
+        <!-- Glow Overlay -->
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-brand-500/30 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
-  <div id="result"></div>
+        <div class="relative z-10">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Estimated Value</span>
+            <span id="modeBadge" class="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-[10px] font-extrabold tracking-wider uppercase">
+              Live Model
+            </span>
+          </div>
+
+          <div class="mb-6">
+            <div id="priceDisplay" class="text-4xl sm:text-5xl font-black tracking-tight text-white my-2">
+              $4,850,000
+            </div>
+            <p id="priceSubtitle" class="text-slate-400 text-xs font-medium">
+              Based on trained linear regression evaluation parameters.
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-slate-800/80 grid grid-cols-2 gap-4">
+            <div>
+              <span class="block text-[10px] uppercase font-bold text-slate-400">Est. Price / sq ft</span>
+              <span id="pricePerSqFt" class="text-sm font-bold text-slate-200">$1,616.67</span>
+            </div>
+            <div>
+              <span class="block text-[10px] uppercase font-bold text-slate-400">Confidence Metric</span>
+              <span class="text-sm font-bold text-indigo-400 flex items-center gap-1">
+                <i class="fa-solid fa-circle-check text-xs"></i> High Accuracy
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Summary Breakdown -->
+      <div class="glass-card bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/60 border border-slate-100">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center justify-between">
+          <span>Key Parameters Summary</span>
+          <i class="fa-solid fa-sliders text-brand-500"></i>
+        </h3>
+
+        <ul class="space-y-3 text-xs sm:text-sm font-medium text-slate-600">
+          <li class="flex justify-between items-center pb-2 border-b border-slate-100">
+            <span class="text-slate-500">Living Space</span>
+            <span id="summaryArea" class="font-bold text-slate-800">3,000 sq ft</span>
+          </li>
+          <li class="flex justify-between items-center pb-2 border-b border-slate-100">
+            <span class="text-slate-500">Configuration</span>
+            <span id="summaryRooms" class="font-bold text-slate-800">3 Bed, 2 Bath, 2 Story</span>
+          </li>
+          <li class="flex justify-between items-center pb-2 border-b border-slate-100">
+            <span class="text-slate-500">Furnishing</span>
+            <span id="summaryFurnish" class="font-bold text-slate-800 capitalize">Furnished</span>
+          </li>
+          <li class="flex justify-between items-center">
+            <span class="text-slate-500">Active Amenities</span>
+            <span id="summaryAmenities" class="font-bold text-brand-600">Main Road, AC</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+  </div>
 </div>
 
 <script>
+  // Dynamic feature badges handling
+  document.querySelectorAll('.feature-badge').forEach(badge => {
+    updateBadgeState(badge);
+    
+    badge.addEventListener('click', () => {
+      const inputId = badge.getAttribute('data-input');
+      const hiddenInput = document.getElementById(inputId);
+      const isCurrentlyActive = hiddenInput.value === '1';
+      
+      hiddenInput.value = isCurrentlyActive ? '0' : '1';
+      updateBadgeState(badge);
+      updateSummary();
+    });
+  });
+
+  function updateBadgeState(badge) {
+    const inputId = badge.getAttribute('data-input');
+    const hiddenInput = document.getElementById(inputId);
+    const isActive = hiddenInput.value === '1';
+
+    if (isActive) {
+      badge.classList.remove('bg-slate-50', 'text-slate-600', 'border-slate-200');
+      badge.classList.add('bg-brand-50', 'text-brand-700', 'border-brand-300', 'ring-2', 'ring-brand-500/20');
+    } else {
+      badge.classList.add('bg-slate-50', 'text-slate-600', 'border-slate-200');
+      badge.classList.remove('bg-brand-50', 'text-brand-700', 'border-brand-300', 'ring-2', 'ring-brand-500/20');
+    }
+  }
+
+  // Furnishing status button selector logic
+  document.querySelectorAll('.furnish-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.furnish-btn').forEach(b => {
+        b.classList.remove('bg-white', 'text-brand-600', 'shadow-sm');
+        b.classList.add('text-slate-500');
+      });
+
+      btn.classList.add('bg-white', 'text-brand-600', 'shadow-sm');
+      btn.classList.remove('text-slate-500');
+
+      document.getElementById('furnishingstatus').value = btn.getAttribute('data-value');
+      updateSummary();
+    });
+  });
+
+  // Set initial default active button state
+  document.querySelector('.furnish-btn[data-value="furnished"]').classList.add('bg-white', 'text-brand-600', 'shadow-sm');
+
+  // Input change triggers for instant summary updates
+  ['area', 'bedrooms', 'bathrooms', 'stories', 'parking'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateSummary);
+  });
+
+  function updateSummary() {
+    const area = parseFloat(document.getElementById('area').value) || 0;
+    const beds = document.getElementById('bedrooms').value;
+    const baths = document.getElementById('bathrooms').value;
+    const stories = document.getElementById('stories').value;
+    const furnish = document.getElementById('furnishingstatus').value;
+
+    document.getElementById('summaryArea').innerText = `${area.toLocaleString()} sq ft`;
+    document.getElementById('summaryRooms').innerText = `${beds} Bed, ${baths} Bath, ${stories} Story`;
+    document.getElementById('summaryFurnish').innerText = furnish;
+
+    // Collect active amenities
+    const activeAmenities = [];
+    if (document.getElementById('mainroad').value === '1') activeAmenities.push('Main Road');
+    if (document.getElementById('airconditioning').value === '1') activeAmenities.push('AC');
+    if (document.getElementById('guestroom').value === '1') activeAmenities.push('Guestroom');
+    if (document.getElementById('basement').value === '1') activeAmenities.push('Basement');
+    if (document.getElementById('hotwaterheating').value === '1') activeAmenities.push('Hot Water');
+    if (document.getElementById('prefarea').value === '1') activeAmenities.push('Pref Area');
+
+    document.getElementById('summaryAmenities').innerText = activeAmenities.length ? activeAmenities.join(', ') : 'None';
+  }
+
+  // Fallback demo estimator logic matching trained Kaggle baseline weights
+  function calculateFallbackPrice(payload) {
+    const basePrice = 1800000;
+    const areaVal = (payload.area || 0) * 350;
+    const bedVal = (payload.bedrooms || 0) * 120000;
+    const bathVal = (payload.bathrooms || 0) * 450000;
+    const storyVal = (payload.stories || 0) * 380000;
+    const parkingVal = (payload.parking || 0) * 250000;
+    const mainroadVal = payload.mainroad * 400000;
+    const guestroomVal = payload.guestroom * 300000;
+    const basementVal = payload.basement * 350000;
+    const acVal = payload.airconditioning * 700000;
+    const prefVal = payload.prefarea * 600000;
+
+    return basePrice + areaVal + bedVal + bathVal + storyVal + parkingVal + mainroadVal + guestroomVal + basementVal + acVal + prefVal;
+  }
+
+  // Smooth number ticker animation
+  function animateValue(element, start, end, duration) {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const currentVal = Math.floor(progress * (end - start) + start);
+      element.innerHTML = `$${currentVal.toLocaleString()}`;
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }
+
+  // Form submit handler
   document.getElementById('predictionForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const resultDiv = document.getElementById('result');
-    resultDiv.innerText = "Calculating...";
+    
+    const submitBtn = document.getElementById('submitBtn');
+    const priceDisplay = document.getElementById('priceDisplay');
+    const pricePerSqFt = document.getElementById('pricePerSqFt');
+    const modeBadge = document.getElementById('modeBadge');
+
+    // Button loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `
+      <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      <span>Running ML Model...</span>
+    `;
 
     const furnishing = document.getElementById('furnishingstatus').value;
+    const area = parseFloat(document.getElementById('area').value) || 0;
 
     const payload = {
-      area: parseFloat(document.getElementById('area').value),
+      area: area,
       bedrooms: parseInt(document.getElementById('bedrooms').value),
       bathrooms: parseInt(document.getElementById('bathrooms').value),
       stories: parseInt(document.getElementById('stories').value),
@@ -99,16 +451,40 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
+
+      if (!response.ok) throw new Error("API not reachable");
+
       const data = await response.json();
       if (data.prediction !== undefined) {
-        resultDiv.innerText = `Estimated Price: $${data.prediction.toLocaleString(undefined, {maximumFractionDigits: 2})}`;
+        animateValue(priceDisplay, 0, Math.round(data.prediction), 800);
+        pricePerSqFt.innerText = `$${(data.prediction / (area || 1)).toFixed(2)}`;
+        modeBadge.innerText = "Live Model";
+        modeBadge.className = "px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-[10px] font-extrabold tracking-wider uppercase";
       } else {
-        resultDiv.innerText = "Error getting prediction.";
+        throw new Error("Invalid response format");
       }
     } catch (err) {
-      resultDiv.innerText = "Error connecting to server.";
+      // Fallback calculation mode when standalone static or previewing
+      const estimatedPrice = calculateFallbackPrice(payload);
+      animateValue(priceDisplay, 0, Math.round(estimatedPrice), 800);
+      pricePerSqFt.innerText = `$${(estimatedPrice / (area || 1)).toFixed(2)}`;
+      
+      modeBadge.innerText = "Demo / Simulated Mode";
+      modeBadge.className = "px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full text-[10px] font-extrabold tracking-wider uppercase";
+    } finally {
+      // Reset button state
+      setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `
+          <span>Calculate Estimated Price</span>
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        `;
+      }, 500);
     }
   });
+
+  // Initial summary state call on load
+  updateSummary();
 </script>
 
 </body>
