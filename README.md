@@ -12,23 +12,6 @@ Serverless API: Fast API backend running as Vercel Serverless Functions.
 
 Offline / Standalone Fallback: Embedded simulation engine for instant client-side preview when testing static files.
 
-📁 Repository Structure
-
-housing-price-predictor/
-├── api/
-│   └── index.py            # FastAPI serverless backend route for Vercel
-├── model/
-│   ├── housing_model.pkl   # Serialized Scikit-Learn model
-│   └── model_columns.json  # Saved column layout for feature alignment
-├── public/
-│   └── index.html          # Main web application dashboard UI
-├── Housing.csv             # Kaggle Housing Prices dataset
-├── train_model.ipynb       # Jupyter notebook for EDA, preprocessing, and model training
-├── vercel.json             # Vercel deployment routing configuration
-├── requirements.txt        # Python backend dependencies
-└── README.md               # Project documentation
-
-
 📊 Dataset Information
 
 This project uses the Housing Prices Dataset sourced from Kaggle (Dataset Link).
